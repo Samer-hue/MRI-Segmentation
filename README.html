@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="icon" href="images/logo.png" type="image/png">
+    <title>MRI分割——自动化生成像素级标签</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9ff;
+            color: #333;
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        .container {
+            width: 80%;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            border-radius: 8px;
+            text-align: center;
+        }
+
+
+        img {
+            width: 80%;
+            height: auto;
+            display: block;
+            margin: 20px auto;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            image-rendering: crisp-edges; 
+        }
+
+
+        img:not([src="images/github-mark.png"]) {
+            width: 50%; 
+        }
+
+        video {
+            width: 90%;
+            height: auto;
+            display: block;
+            margin: 20px auto;
+            border-radius: 5px;
+        }
+
+        h1, h2 {
+            color: #0056b3;
+            font-weight: 300;
+        }
+
+        p, li {
+            line-height: 1.6;
+            text-align: justify;
+            margin-bottom: 16px;
+        }
+
+        .math-formula {
+            font-family: 'Courier New', monospace;
+            font-style: normal;
+            background-color: #eeeeee;
+            padding: 10px;
+            border-radius: 8px;
+            display: inline-block;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        blockquote {
+            border-left: 4px solid #2a7fff;
+            margin: 1.5em 10px;
+            padding: 0.5em 20px;
+            color: #555;
+            background-color: #eeeeee;
+            border-radius: 5px;
+        }
+
+        .github-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .github-link img {
+            width: 24px;
+            height: 24px;
+        }
+
+        .github-link a {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            text-decoration: none;
+            color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>MRI分割——自动化生成像素级标签</h1>
+        <h4>该项目成功申请了“中央高校基本科研业务专项资金”本科生项目</h4>
+        <div class="github-link" style="display: flex; justify-content: center; gap: 20px;">
+            <a href="https://github.com/Samer-hue/DicTED" style="text-align: center;">
+                <img src="images/github-mark.png" alt="GitHub">
+                <span>项目代码</span>
+            </a>
+        </div>
+
+        <blockquote>
+            <p>深度学习技术在医学图像处理领域展现了卓越的能力，尤其是在医学图像中精准定位和分割病灶。然而，训练这些分割模型需要大量由专业医生手动标注的像素级标签，相较于更易获取的图像级标签，这一过程既耗时又费力。因此，我们致力于开发基于MRI图像级标签的自动化方法，以生成像素级标签。
+            </p>
+        </blockquote>
+        <h2>技术背景与挑战</h2>
+        </p>
+        <p>近年来，深度学习技术在医学图像处理，尤其是磁共振成像（MRI）和计算机断层扫描（CT）上的病变定位与分割方面，展现出了卓越的能力。然而，训练这些分割模型往往需要大量由专业医生手动标注的像素级标签，这一过程比获取相对容易的图像级标签更为耗时且费力。经过广泛调研，我们希望通过采用图像级标签作为监督，开发一种弱监督语义分割模型，以应对这一挑战。基于现有的研究成果，我对弱监督分割模型进行了优化设计，力求实现自动化和高效性。
+        </p>
+        <h2>解决方案</h2>
+        <p>我们的解决方案主要分为分类、分割两部分：</p>
+        <h3>分类（生成像素级标签）</h3>
+        <ul>
+            <li>采用选定的卷积神经网络（如 ResNet）在公开的图像级标签数据集（如 RSNA2019）上进行分类训练。</li>
+            <li>使用 CAM 推理来判断分类网络的关注点，生成 Mask。</li>
+            <li>通过 CRF 优化 Mask，生成像素级标签。</li>
+            <li>将生成的像素级标签与专家标注的 Ground Mask 进行效果对比。</li>
+        </ul>
+        <img src="images/generate_mask.png" alt="Swin-Unet模型架构"> 
+        <h3>分割（将像素级标签作为分割模型的输入）</h3>
+        <p> 使用分类任务生成的像素级标签来训练分割网络（如 Deeplabv3、Trans-Unet、Swin-Unet、MT-Unet），完成弱监督分割流程。</p>
+        <img src="images/TransUnet.png" alt="TransUnet模型架构">
+        <img src="images/Swin-Unet.png" alt="Swin-Unet模型架构"> 
+    </div>
+</body>
+
+</html>
